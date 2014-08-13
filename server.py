@@ -6,24 +6,24 @@ from mail import MailClient
 from oscarbot import OscarBot
 
 def main():
-  minute = 60
   time_ticket = datetime(2014,8,8,hour=12) 
   current_time = datetime.now()
   while True:
     current_time = datetime.now()
-    time.sleep(3*minute)
-    print current_time
+    time.sleep(60)
     if current_time > time_ticket:
-      oscar = OscarBot(info.gtid,info.pin)
-      classes = oscar.Register([89086])
-      mail_client = MailClient("smtp.gmail.com",587,
-                        info.address,info.password)
-      content = "OscarBot got you into {}".format(classes)
-      message = mail_client.NewMessage("d_faisal_a@yahoo.com","OscarBot",content)
-      mail_client.Send(message)
+      StartRegistration([85538])
       return
 
-main()
+def StartRegistration(classes):
+  oscar = OscarBot(info.gtid,info.pin)
+  classes = oscar.Register(classes)
+  mail_client = MailClient(info.address,info.password)
+  mail_client.Open()
+  content = "OscarBot signed you up for {}!".format(classes)
+  message = mail_client.NewMessage(info.cell,"OscarBot",content)
+  mail_client.Send(message)
+  mail_client.Close()
 
-if "__name__" == "__main__":
-  pass
+if __name__ == "__main__":
+  main()

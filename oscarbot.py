@@ -5,11 +5,12 @@ import cookielib
 
 class OscarBot(object):
 
-  def __init__(_id,pin):
+  def __init__(self,_id,pin):
     self._id = _id
     self.pin = pin
 
-  def Register(schedule):
+  def Register(self,schedule):
+    """Navigate to Oscar and register for classes"""
     # oscar login page
     oscar = "https://oscar.gatech.edu/pls/bprod/twbkwbis.P_GenMenu?name=bmenu.P_StuMainMnu"
     
@@ -28,7 +29,7 @@ class OscarBot(object):
     #open oscar sign-in page and grab login form
     r = br.open(oscar)
     br.form = list(br.forms())[0]
-    br["sid"] = self.gtid
+    br["sid"] = self._id
     br["PIN"] = self.pin
     res = br.submit()
 
@@ -43,4 +44,32 @@ class OscarBot(object):
     br.form = list(br.forms())[1]
 
     br.submit()
-    print br.response().read()    
+
+    #now we are a the registration page
+    #the text fields are in the second form
+    br.form = list(br.forms())[1]
+    fields = []
+
+    #the text fields all have the same name and type
+    #so we'll just insert them into a list 
+    for control in br.form.controls:
+      if control.type == "text" and control.name == "CRN_IN":
+        fields.append(control)
+
+    #set each text fields equal to a class in the schedule
+    for field, course in zip(fields, schedule):
+      field.value = str(course)
+   
+    response = br.submit()
+    registered_classes = self.EnrolledClasses(response)
+    return registered_classes
+
+  def EnrolledClasses(self,html):
+    """Parse HTML and return which classes it successfully registered for.""" 
+    classes = []
+    soup = BeautifulSoup(html)
+    for element in soup.find_all("input"):
+      if element["name"] == "TITLE" and element["value"]:
+        classes.append(element.get("value"))
+    return classes
+
