@@ -42,10 +42,9 @@ class OscarBot(object):
     #the year selection form is the second(hence 1st index)
     #defaults to the current year so we can just submit
     br.form = list(br.forms())[1]
-
     br.submit()
 
-    #now we are a the registration page
+    #now we are at the registration page
     #the text fields are in the second form
     br.form = list(br.forms())[1]
     fields = []
